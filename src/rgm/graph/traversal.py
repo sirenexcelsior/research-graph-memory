@@ -23,6 +23,46 @@ INTENT_LAYERS = {
 
 BLOCKED_RELATIONS = {"RELATED_TO"}
 
+INTENT_EDGE_ALLOWLIST = {
+    "research_evidence": {
+        "SUPPORTED_BY",
+        "CONTRADICTED_BY",
+        "TESTED_BY",
+        "PRODUCES",
+        "EVIDENCE_FOR",
+        "HAS_CHUNK",
+        "PART_OF",
+        "STATES",
+    },
+    "hypothesis_trace": {
+        "SUPPORTED_BY",
+        "CONTRADICTED_BY",
+        "TESTED_BY",
+        "PRODUCES",
+        "EVIDENCE_FOR",
+        "MOTIVATES",
+        "GENERATES",
+        "NEXT_STEP_FOR",
+        "STATES",
+    },
+    "preference_query": {
+        "APPLIES_TO",
+        "USED_BY",
+        "AFFECTS",
+        "NEXT_STEP_FOR",
+        "PROMOTED_TO",
+        "STATES",
+    },
+    "project_state": {
+        "APPLIES_TO",
+        "USED_BY",
+        "AFFECTS",
+        "NEXT_STEP_FOR",
+        "PROMOTED_TO",
+        "STATES",
+    },
+}
+
 
 def max_hops_for_intent(intent: str, debug: bool = False) -> int:
     if intent == "debug_explore" and not debug:
@@ -33,6 +73,9 @@ def max_hops_for_intent(intent: str, debug: bool = False) -> int:
 def edge_allowed(edge_relation: str, intent: str) -> bool:
     if edge_relation in BLOCKED_RELATIONS and intent != "debug_explore":
         return False
+    allowlist = INTENT_EDGE_ALLOWLIST.get(intent)
+    if allowlist is not None:
+        return edge_relation in allowlist
     return True
 
 
@@ -90,4 +133,3 @@ def expand_from_seeds(
         "paths": paths,
         "max_hops": hops,
     }
-
