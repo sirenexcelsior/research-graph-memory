@@ -25,7 +25,7 @@ RGM 负责记忆治理。
 
 ## 🚦 当前进度
 
-当前阶段：**V0.1.1 沙盒原型**
+当前阶段：**V0.1.2 沙盒原型**
 
 已完成：
 
@@ -43,6 +43,8 @@ RGM 负责记忆治理。
 - 图验证规则。
 - Hermes extractor provider 边界。
 - BGE-M3 dense embedding 接口占位。
+- 弱边/强边策略与 RGM-owned edge metadata。
+- Holographic Memory 自动生成 lightweight weak operational edges。
 
 已在本地私有真实语料上验证。真实语料不会包含在公开仓库中。
 
@@ -85,6 +87,14 @@ rgm recall "What evidence supports keyword search?" --project demo
 ```
 
 公开仓库只包含 `examples/` 下的 synthetic demo 数据。
+
+## 🏗 边治理原则
+
+```text
+弱边由确定性规则或 embedding 相似度维护。
+强边可以由 LLM 推断。
+所有被接受的边最终都由 RGM 拥有、验证和治理。
+```
 
 ## 🧭 常用命令
 
@@ -130,7 +140,7 @@ rgm serve --host 127.0.0.1 --port 8000
 
 ## 🔮 BGE-M3 计划
 
-V0.1.1 只保留接口，不强依赖 dense embedding。
+V0.1.2 只保留接口，不强依赖 dense embedding。
 
 V0.2 计划：
 
@@ -151,6 +161,7 @@ BGE-M3 是可选 sidecar index，不替代 SQLite 或 FTS5。
 
 - ✅ V0.1：SQLite、FTS5、CLI、FastAPI、JSONL、Holographic/Markdown 导入。
 - ✅ V0.1.1：抽取器边界、规则研究语义抽取、Hermes provider stub、真实 GenMath/Hermes 测试。
+- ✅ V0.1.2：弱边策略、RGM 边所有权 metadata、Holographic lightweight weak edges。
 
 下一步：
 
@@ -165,4 +176,3 @@ BGE-M3 是可选 sidecar index，不替代 SQLite 或 FTS5。
 ```bash
 pytest
 ```
-

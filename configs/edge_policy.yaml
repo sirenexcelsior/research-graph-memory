@@ -1,0 +1,31 @@
+owner: rgm
+
+weak_relations:
+  - HAS_CHUNK
+  - PART_OF
+  - MENTIONS
+  - RELATED_TO
+  - STATES
+  - SUGGESTS
+  - APPLIES_TO
+  - USED_BY
+  - AFFECTS
+  - NEXT_STEP_FOR
+  - SIMILAR_TO
+  - SEMANTIC_NEIGHBOR
+
+strong_relations:
+  - SUPPORTED_BY
+  - CONTRADICTED_BY
+  - TESTED_BY
+  - PRODUCES
+  - EVIDENCE_FOR
+  - MOTIVATES
+  - GENERATES
+  - PROMOTED_TO
+
+strong_edge_policy:
+  require_provenance: true
+  min_confidence_auto_accept: 0.75
+  pending_below_confidence: 0.5
+

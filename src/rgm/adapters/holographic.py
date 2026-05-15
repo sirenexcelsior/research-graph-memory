@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
+from rgm.graph.lightweight_edges import build_lightweight_weak_edges
 from rgm.models import Node, stable_id
 from rgm.storage.sqlite_store import SQLiteStore
 
@@ -93,9 +94,14 @@ def import_holographic(path: str | Path, store: SQLiteStore | None = None) -> di
     db = store or SQLiteStore()
     db.init_db()
     records = load_holographic_records(path)
-    count = 0
+    nodes: list[Node] = []
     for record in records:
-        db.upsert_node(holographic_to_node(record))
-        count += 1
-    return {"records": len(records), "nodes": count}
+        node = holographic_to_node(record)
+        db.upsert_node(node)
+        nodes.append(node)
 
+    edges = build_lightweight_weak_edges(nodes)
+    for edge in edges:
+        db.upsert_edge(edge)
+
+    return {"records": len(records), "nodes": len(nodes), "edges": len(edges)}

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "research-graph-memory"
-version = "0.1.0"
+version = "0.1.2"
 description = "Heterogeneous multi-layer research graph memory for long-lived agent memory."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -32,4 +32,3 @@ pythonpath = ["src"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/rgm"]
-

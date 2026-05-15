@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from rgm.config import RGMConfig
+from rgm.graph.edge_policy import apply_edge_policy
 from rgm.graph.schema import enforce_edge_rules
 from rgm.models import Chunk, Edge, Node, utc_now
 
@@ -158,6 +159,7 @@ class SQLiteStore:
 
     def upsert_edge(self, edge: Edge) -> Edge:
         edge = enforce_edge_rules(edge)
+        edge = apply_edge_policy(edge)
         with self.connect() as conn:
             conn.execute(
                 """
@@ -360,4 +362,3 @@ class SQLiteStore:
             token_count=row["token_count"],
             metadata=_json_loads(row["metadata_json"]),
         )
-

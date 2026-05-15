@@ -12,16 +12,31 @@
     "category": "project",
     "project": "demo",
     "scope": "project",
-    "title": "Retrieval baseline decision",
+    "title": "Retrieval project state",
     "content": "The demo project uses SQLite FTS5 as the durable keyword retrieval baseline before adding optional dense retrieval."
+  },
+  {
+    "id": "demo-workflow-1",
+    "category": "tool",
+    "project": "demo",
+    "scope": "project",
+    "title": "Local-first tool policy",
+    "content": "Use local storage and deterministic export formats before introducing external services."
   },
   {
     "id": "demo-tool-1",
     "category": "tool",
     "project": "demo",
     "scope": "project",
-    "title": "Local-first tool policy",
-    "content": "Use local storage and deterministic export formats before introducing external services."
+    "title": "FTS5 backend config",
+    "content": "SQLite FTS5 backend configuration for local keyword indexing."
+  },
+  {
+    "id": "demo-decision-1",
+    "category": "project",
+    "project": "demo",
+    "scope": "project",
+    "title": "Dense retrieval decision",
+    "content": "Decision: keep BGE-M3 as an optional sidecar index rather than a hard dependency."
   }
 ]
-

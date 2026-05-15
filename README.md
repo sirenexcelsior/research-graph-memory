@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](#-install)
 [![Storage](https://img.shields.io/badge/Storage-SQLite%20%2B%20FTS5-lightgrey)](#-architecture)
 [![API](https://img.shields.io/badge/API-FastAPI-green)](#-fastapi)
-[![Status](https://img.shields.io/badge/Status-V0.1.1%20sandbox-orange)](#-status)
+[![Status](https://img.shields.io/badge/Status-V0.1.2%20sandbox-orange)](#-status)
 
 Translations: [中文](README.zh-CN.md) | [Русский](README.ru.md)
 
@@ -37,7 +37,7 @@ It is intentionally **not** a generic GraphRAG framework. SQLite is the durable 
 
 ## 🚦 Status
 
-Current stage: **V0.1.1 sandbox prototype**
+Current stage: **V0.1.2 sandbox prototype**
 
 Implemented:
 
@@ -55,6 +55,8 @@ Implemented:
 - Graph validation rules.
 - Hermes extraction provider boundary.
 - BGE-M3 dense embedding interface stub.
+- Weak/strong edge policy with RGM-owned edge metadata.
+- Holographic Memory weak operational edge generation.
 
 Validated on a private local corpus. The corpus itself is not included in this public repository.
 
@@ -109,6 +111,14 @@ raw data
   -> graph expansion
   -> structured recall context
   -> Hermes / API consumers
+```
+
+Edge governance principle:
+
+```text
+Weak edges are maintained by deterministic rules or embedding similarity.
+Strong edges may be inferred by LLMs.
+Every accepted edge is owned, validated, and governed by RGM.
 ```
 
 Layers:
@@ -213,7 +223,7 @@ Endpoints:
 
 ## 🔮 BGE-M3 Plan
 
-V0.1.1 includes the interface but does not require dense embeddings.
+V0.1.2 includes the interface but does not require dense embeddings.
 
 Planned V0.2 hybrid retrieval:
 
@@ -251,6 +261,7 @@ Done:
 
 - ✅ V0.1: SQLite + FTS5 + CLI + FastAPI + JSONL + Holographic/Markdown import.
 - ✅ V0.1.1: extraction provider boundary, rule-based research extraction, Hermes provider stub, real GenMath/Hermes smoke test.
+- ✅ V0.1.2: weak edge policy, RGM edge ownership metadata, Holographic lightweight weak edges.
 
 Next:
 
@@ -265,4 +276,3 @@ Next:
 ```bash
 pytest
 ```
-

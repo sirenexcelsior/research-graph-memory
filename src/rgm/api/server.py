@@ -5,6 +5,7 @@ from typing import Any
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
+from rgm import __version__
 from rgm.memory.forget import forget
 from rgm.memory.promote import promote
 from rgm.memory.recall import recall
@@ -44,11 +45,11 @@ class ForgetPayload(BaseModel):
 def create_app(store: SQLiteStore | None = None) -> FastAPI:
     db = store or SQLiteStore()
     db.init_db()
-    app = FastAPI(title="Research Graph Memory", version="0.1.0")
+    app = FastAPI(title="Research Graph Memory", version=__version__)
 
     @app.get("/health")
     def health() -> dict[str, Any]:
-        return {"ok": True, "service": "research-graph-memory", "version": "0.1.0"}
+        return {"ok": True, "service": "research-graph-memory", "version": __version__}
 
     @app.post("/memory/remember")
     def api_remember(payload: RememberPayload) -> dict[str, Any]:
@@ -116,4 +117,3 @@ def create_app(store: SQLiteStore | None = None) -> FastAPI:
 
 
 app = create_app()
-
