@@ -1,23 +1,24 @@
 # research-graph-memory
 
+**🧠 Гетерогенная многоуровневая исследовательская графовая память для долгоживущих агентов.**
+
 [English](README.md) | [中文](README.zh-CN.md)
-
----
-
-### Назначение проекта
 
 `research-graph-memory` — это локальная, тестируемая система долговременной памяти для исследовательских агентов, например Hermes. Она хранит операционную память и исследовательские знания в едином графе, но разделяет смысл через `layer`, `type` и `scope`.
 
 Это не универсальный GraphRAG. SQLite используется как долговременное хранилище, FTS5 — как базовый полнотекстовый поиск, NetworkX — как восстанавливаемый графовый кэш, JSONL — как переносимый формат экспорта и импорта.
 
-Главный принцип:
+## ✨ Возможности
 
-```text
-Hermes отвечает за семантическое понимание.
-RGM отвечает за управление памятью.
-```
+- 🧩 Единый гетерогенный граф для document / lightweight / research memory.
+- 🔎 Локальный поиск на SQLite + FTS5.
+- 📝 Импорт Holographic Memory JSON/JSONL и Markdown / LLM-Wiki.
+- 🧪 Извлечение `Claim`, `Evidence`, `Question`, `Hypothesis`, `Task`.
+- 🔌 CLI + FastAPI, готовность к интеграции с Hermes.
+- 📦 JSONL импорт/экспорт без привязки к закрытому формату.
+- 🚫 Без Neo4j, LangChain, LlamaIndex и обязательных внешних API.
 
-### Текущий статус
+## 🚦 Текущий статус
 
 Стадия: **V0.1.1 sandbox prototype**
 
@@ -64,60 +65,99 @@ Tests:
 - graph validation: ok, 0 issues
 ```
 
-### Быстрый старт
+## ⚡ Быстрый старт
 
 ```bash
 cd GraphMemory/research-graph-memory
 python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
+
 rgm init
-```
-
-Импорт Holographic Memory:
-
-```bash
 rgm import-holographic examples/synthetic_holographic.json
-```
-
-Импорт Markdown базы знаний:
-
-```bash
 rgm ingest examples/synthetic_notes --project demo --extractor rule_based
-```
-
-Запрос:
-
-```bash
 rgm recall "What evidence supports keyword search?" --project demo
 ```
 
-Запуск FastAPI:
+Публичный репозиторий содержит только синтетические demo-данные в `examples/`.
+
+## 🧭 Основные команды
+
+```bash
+rgm remember "Use SQLite FTS5 as the baseline search layer." \
+  --type ProjectDecision \
+  --layer lightweight \
+  --scope project \
+  --project research-graph-memory
+
+rgm promote <node_id> --to Hypothesis
+rgm forget <node_id>
+rgm export data/processed
+rgm import-jsonl data/processed
+```
+
+Варианты extractor:
+
+```bash
+rgm ingest examples/synthetic_notes --project demo --extractor rule_based
+rgm ingest examples/synthetic_notes --project demo --extractor none
+rgm ingest examples/synthetic_notes --project demo --extractor hermes
+```
+
+Hermes может отдавать кандидатов узлов и ребер, но RGM все равно выполняет schema validation и edge rule enforcement.
+
+## 🌐 FastAPI
 
 ```bash
 rgm serve --host 127.0.0.1 --port 8000
 ```
 
-### План развития
+Основные endpoints:
+
+- `GET /health`
+- `POST /memory/remember`
+- `POST /memory/recall`
+- `POST /memory/promote`
+- `POST /memory/forget`
+- `POST /search`
+- `POST /trace`
+- `POST /evidence`
+
+## 🔮 План BGE-M3
+
+V0.1.1 содержит интерфейс, но не требует dense embeddings.
+
+План V0.2:
+
+```text
+query
+  -> FTS5 keyword seeds
+  -> optional BGE-M3 dense semantic seeds
+  -> score fusion
+  -> layer-aware graph expansion
+  -> structured context
+```
+
+BGE-M3 должен быть опциональным sidecar index, а не заменой SQLite или FTS5.
+
+## 🗺 План развития
 
 Сделано:
 
-- V0.1: SQLite, FTS5, CLI, FastAPI, JSONL, импорт Holographic/Markdown.
-- V0.1.1: extractor provider boundary, правиловое исследовательское извлечение, Hermes provider stub, тест на реальных GenMath/Hermes данных.
+- ✅ V0.1: SQLite, FTS5, CLI, FastAPI, JSONL, импорт Holographic/Markdown.
+- ✅ V0.1.1: extractor provider boundary, правиловое исследовательское извлечение, Hermes provider stub, тест на реальных GenMath/Hermes данных.
 
 Далее:
 
-- V0.2: опциональный BGE-M3 dense sidecar index и hybrid search.
-- V0.2.x: метрики качества извлечения на реальных корпусах.
-- V0.3: реальный цикл Hermes LLM extraction.
-- V0.4: инкрементальная индексация и обнаружение изменений.
-- V0.5: adapter для экспериментов/результатов и более сильный evidence tracing.
+- 🔜 V0.2: опциональный BGE-M3 dense sidecar index и hybrid search.
+- 🔜 V0.2.x: метрики качества извлечения на реальных корпусах.
+- 🔜 V0.3: реальный цикл Hermes LLM extraction.
+- 🔜 V0.4: инкрементальная индексация и обнаружение изменений.
+- 🔜 V0.5: adapter для экспериментов/результатов и более сильный evidence tracing.
 
-Ограничения:
+## ✅ Тесты
 
-- Без Neo4j.
-- Без LangChain.
-- Без LlamaIndex.
-- Основное ядро не зависит от внешних API.
-- Без сложного UI.
-- BGE-M3 является опциональным усилением, а не заменой FTS5.
+```bash
+pytest
+```
+

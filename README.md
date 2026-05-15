@@ -1,16 +1,41 @@
 # research-graph-memory
 
-**Heterogeneous Multi-Layer Research Graph Memory for long-lived research agents.**
+**🧠 Heterogeneous Multi-Layer Research Graph Memory for long-lived research agents.**
+
+[![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](#-install)
+[![Storage](https://img.shields.io/badge/Storage-SQLite%20%2B%20FTS5-lightgrey)](#-architecture)
+[![API](https://img.shields.io/badge/API-FastAPI-green)](#-fastapi)
+[![Status](https://img.shields.io/badge/Status-V0.1.1%20sandbox-orange)](#-status)
+
+Translations: [中文](README.zh-CN.md) | [Русский](README.ru.md)
 
 `research-graph-memory` is a local, testable memory substrate for agents such as Hermes. It stores lightweight operational memory and research-grade knowledge in one graph, while keeping semantics separated by `layer`, `type`, and `scope`.
 
 It is intentionally **not** a generic GraphRAG framework. SQLite is the durable store, SQLite FTS5 handles keyword retrieval, NetworkX provides a rebuildable graph cache, JSONL keeps the system portable, and optional dense retrieval is planned as a sidecar layer.
 
-Translations: [中文](README.zh-CN.md) | [Русский](README.ru.md)
+## ✨ Highlights
 
----
+- 🧩 Unified heterogeneous graph for document, lightweight, and research memory.
+- 🔎 Local-first retrieval with SQLite FTS5 and graph expansion.
+- 📝 Imports Holographic Memory JSON/JSONL and Markdown / LLM-Wiki notes.
+- 🧪 Extracts research structure: `Claim`, `Evidence`, `Question`, `Hypothesis`, `Task`.
+- 🔌 CLI + FastAPI, ready for Hermes integration.
+- 📦 JSONL import/export to avoid data lock-in.
+- 🚫 No Neo4j, LangChain, LlamaIndex, external API dependency, or heavy UI.
 
-### Status
+## 📚 Contents
+
+- [Status](#-status)
+- [Quick Demo](#-quick-demo)
+- [Architecture](#-architecture)
+- [Install](#-install)
+- [Core Commands](#-core-commands)
+- [FastAPI](#-fastapi)
+- [BGE-M3 Plan](#-bge-m3-plan)
+- [Hermes Integration](#-hermes-integration)
+- [Roadmap](#-roadmap)
+
+## 🚦 Status
 
 Current stage: **V0.1.1 sandbox prototype**
 
@@ -57,7 +82,23 @@ Tests:
 - graph validation: ok, 0 issues
 ```
 
-### Architecture
+## ⚡ Quick Demo
+
+```bash
+cd GraphMemory/research-graph-memory
+python3.11 -m venv .venv
+source .venv/bin/activate
+pip install -e ".[dev]"
+
+rgm init
+rgm import-holographic examples/synthetic_holographic.json
+rgm ingest examples/synthetic_notes --project demo --extractor rule_based
+rgm recall "What evidence supports keyword search?" --project demo
+```
+
+The demo uses only synthetic data under `examples/`.
+
+## 🏗 Architecture
 
 ```text
 raw data
@@ -83,7 +124,7 @@ Important edge rules:
 - `SUPPORTED_BY`, `CONTRADICTED_BY`, `TESTED_BY`, `PRODUCES`, and `EVIDENCE_FOR` are reasoning-allowed.
 - `Preference`, `ToolConfig`, and `WorkflowHint` cannot be used as `Evidence`.
 
-### Install
+## 🛠 Install
 
 ```bash
 cd GraphMemory/research-graph-memory
@@ -92,30 +133,21 @@ source .venv/bin/activate
 pip install -e ".[dev]"
 ```
 
-### Initialize
+## 🧭 Core Commands
+
+Initialize:
 
 ```bash
 rgm init
 ```
 
-This creates the SQLite database, FTS5 indexes, and project data directories.
-
-### Import Holographic Memory
+Import synthetic Holographic Memory:
 
 ```bash
 rgm import-holographic examples/synthetic_holographic.json
 ```
 
-Holographic import preserves original content and stores the raw record in `metadata.raw_record`.
-
-Mapping:
-
-- `general` -> `ProjectState`
-- `user_pref` -> `Preference` or `WorkflowHint`
-- `project` -> `ProjectState` or `ProjectDecision`
-- `tool` -> `ToolConfig` or `WorkflowHint`
-
-### Import Markdown / LLM-Wiki Notes
+Import Markdown notes:
 
 ```bash
 rgm ingest examples/synthetic_notes --project demo --extractor rule_based
@@ -129,11 +161,7 @@ rgm ingest examples/synthetic_notes --project demo --extractor none
 rgm ingest examples/synthetic_notes --project demo --extractor hermes
 ```
 
-The default `rule_based` extractor is conservative. It detects explicit structure such as theorem/definition headings, blockquotes, `Claim:`, `Evidence:`, `Question:`, and `TODO`.
-
-Hermes can later provide LLM-generated extraction candidates through the `hermes` provider. RGM still validates and enforces graph rules before writing.
-
-### Remember, Recall, Promote, Forget
+Remember, recall, promote, forget:
 
 ```bash
 rgm remember "Use SQLite FTS5 as the baseline search layer." \
@@ -149,6 +177,13 @@ rgm promote <node_id> --to Hypothesis
 rgm forget <node_id>
 ```
 
+Export and import JSONL:
+
+```bash
+rgm export data/processed
+rgm import-jsonl data/processed
+```
+
 Recall returns structured JSON:
 
 - `research_context`
@@ -159,16 +194,7 @@ Recall returns structured JSON:
 - `graph_paths`
 - `debug_info`
 
-Intent hop limits:
-
-- `general_recall`: 1-hop
-- `project_state`: 1-hop
-- `preference_query`: 1-hop
-- `research_evidence`: 2-hop
-- `hypothesis_trace`: 2-hop
-- `debug_explore`: 3-hop only with explicit debug mode
-
-### FastAPI
+## 🌐 FastAPI
 
 ```bash
 rgm serve --host 127.0.0.1 --port 8000
@@ -185,20 +211,7 @@ Endpoints:
 - `POST /trace`
 - `POST /evidence`
 
-### JSONL Portability
-
-```bash
-rgm export data/processed
-rgm import-jsonl data/processed
-```
-
-Exported files:
-
-- `nodes.jsonl`
-- `edges.jsonl`
-- `chunks.jsonl`
-
-### BGE-M3 Plan
+## 🔮 BGE-M3 Plan
 
 V0.1.1 includes the interface but does not require dense embeddings.
 
@@ -215,7 +228,7 @@ query
 
 BGE-M3 should be implemented as an optional sidecar dense index, not as a replacement for SQLite or FTS5.
 
-### Hermes Integration Plan
+## 🤝 Hermes Integration
 
 RGM is designed to integrate with Hermes over HTTP:
 
@@ -232,32 +245,24 @@ Hermes does semantic understanding.
 RGM does memory governance.
 ```
 
-### Roadmap
+## 🗺 Roadmap
 
 Done:
 
-- V0.1: SQLite + FTS5 + CLI + FastAPI + JSONL + Holographic/Markdown import.
-- V0.1.1: extraction provider boundary, rule-based research extraction, Hermes provider stub, real GenMath/Hermes smoke test.
+- ✅ V0.1: SQLite + FTS5 + CLI + FastAPI + JSONL + Holographic/Markdown import.
+- ✅ V0.1.1: extraction provider boundary, rule-based research extraction, Hermes provider stub, real GenMath/Hermes smoke test.
 
 Next:
 
-- V0.2: optional BGE-M3 dense sidecar index and hybrid search.
-- V0.2.x: better extraction evaluation metrics on real corpora.
-- V0.3: real Hermes LLM extraction loop.
-- V0.4: incremental indexing and update detection.
-- V0.5: experiment/result adapter and stronger evidence tracing.
+- 🔜 V0.2: optional BGE-M3 dense sidecar index and hybrid search.
+- 🔜 V0.2.x: better extraction evaluation metrics on real corpora.
+- 🔜 V0.3: real Hermes LLM extraction loop.
+- 🔜 V0.4: incremental indexing and update detection.
+- 🔜 V0.5: experiment/result adapter and stronger evidence tracing.
 
-Boundaries:
-
-- No Neo4j.
-- No LangChain.
-- No LlamaIndex.
-- No external API dependency for core operation.
-- No complex UI.
-- Dense retrieval remains optional.
-
-### Test
+## ✅ Test
 
 ```bash
 pytest
 ```
+
