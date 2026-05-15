@@ -1,0 +1,27 @@
+[
+  {
+    "id": "demo-pref-1",
+    "category": "user_pref",
+    "project": "demo",
+    "scope": "project",
+    "title": "Response format preference",
+    "content": "The demo user prefers structured JSON contexts for agent memory recall."
+  },
+  {
+    "id": "demo-project-1",
+    "category": "project",
+    "project": "demo",
+    "scope": "project",
+    "title": "Retrieval baseline decision",
+    "content": "The demo project uses SQLite FTS5 as the durable keyword retrieval baseline before adding optional dense retrieval."
+  },
+  {
+    "id": "demo-tool-1",
+    "category": "tool",
+    "project": "demo",
+    "scope": "project",
+    "title": "Local-first tool policy",
+    "content": "Use local storage and deterministic export formats before introducing external services."
+  }
+]
+

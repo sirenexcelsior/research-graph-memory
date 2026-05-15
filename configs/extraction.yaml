@@ -1,0 +1,49 @@
+provider: rule_based
+enabled: true
+
+rule_based:
+  max_claim_chars: 1200
+  max_evidence_chars: 1600
+  claim_markers:
+    - "Claim:"
+    - "Conclusion:"
+    - "Definition:"
+    - "Theorem:"
+    - "Lemma:"
+    - "Proposition:"
+    - "Corollary:"
+    - "定义"
+    - "定理"
+    - "引理"
+    - "命题"
+    - "推论"
+    - "公式"
+    - "判据"
+    - "核心区分"
+  evidence_markers:
+    - "Evidence:"
+    - "出处"
+    - "引用"
+    - "俄文原文"
+    - "book_ref"
+  question_markers:
+    - "Question:"
+    - "问题"
+    - "待验证"
+    - "未知"
+  hypothesis_markers:
+    - "Hypothesis:"
+    - "假设"
+    - "猜想"
+    - "可能"
+  task_markers:
+    - "TODO"
+    - "Next:"
+    - "下一步"
+    - "待补"
+
+hermes:
+  endpoint: "http://127.0.0.1:8001/extract"
+  timeout_seconds: 30
+  max_chunk_chars: 4000
+

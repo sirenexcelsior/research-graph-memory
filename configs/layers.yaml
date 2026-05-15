@@ -1,0 +1,13 @@
+layers:
+  document:
+    purpose: "Source documents and chunks. Preserves raw imported material."
+  lightweight:
+    purpose: "Operational long-term memory: preferences, workflow hints, state, decisions, todos, and session notes."
+  research:
+    purpose: "Research-grade knowledge: concepts, claims, hypotheses, evidence, experiments, results, questions, and tasks."
+scopes:
+  - global
+  - project
+  - session
+  - document
+

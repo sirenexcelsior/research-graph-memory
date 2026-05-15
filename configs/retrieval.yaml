@@ -1,0 +1,22 @@
+intents:
+  general_recall:
+    max_hops: 1
+  project_state:
+    max_hops: 1
+  preference_query:
+    max_hops: 1
+  research_evidence:
+    max_hops: 2
+  hypothesis_trace:
+    max_hops: 2
+  debug_explore:
+    max_hops: 3
+    requires_explicit_debug: true
+fts:
+  node_limit: 8
+  chunk_limit: 8
+dense_embedding:
+  enabled: false
+  provider: bge-m3
+  model_path_env: BGE_M3_MODEL_PATH
+
