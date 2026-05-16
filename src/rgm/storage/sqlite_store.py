@@ -8,7 +8,7 @@ from typing import Any, Iterable
 
 from rgm.config import RGMConfig
 from rgm.graph.edge_policy import apply_edge_policy
-from rgm.graph.schema import enforce_edge_rules
+from rgm.graph.schema import NON_EVIDENCE_TYPES, enforce_edge_rules
 from rgm.models import Chunk, Edge, Node, utc_now
 
 
@@ -57,6 +57,7 @@ class SQLiteStore:
                   content TEXT NOT NULL,
                   importance REAL DEFAULT 0.5,
                   confidence REAL DEFAULT 1.0,
+                  extraction_confidence REAL DEFAULT NULL,
                   status TEXT DEFAULT 'active',
                   created_at TEXT,
                   updated_at TEXT,
@@ -101,6 +102,12 @@ class SQLiteStore:
                 CREATE INDEX IF NOT EXISTS idx_edges_relation ON edges(relation);
                 """
             )
+            self._migrate_nodes_table(conn)
+
+    def _migrate_nodes_table(self, conn: sqlite3.Connection) -> None:
+        columns = {row["name"] for row in conn.execute("PRAGMA table_info(nodes)").fetchall()}
+        if "extraction_confidence" not in columns:
+            conn.execute("ALTER TABLE nodes ADD COLUMN extraction_confidence REAL DEFAULT NULL")
 
     def upsert_node(self, node: Node) -> Node:
         node.updated_at = node.updated_at or utc_now()
@@ -109,8 +116,8 @@ class SQLiteStore:
                 """
                 INSERT INTO nodes (
                   id, type, layer, scope, project, source_system, title, content,
-                  importance, confidence, status, created_at, updated_at, metadata_json
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                  importance, confidence, extraction_confidence, status, created_at, updated_at, metadata_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(id) DO UPDATE SET
                   type=excluded.type,
                   layer=excluded.layer,
@@ -121,6 +128,7 @@ class SQLiteStore:
                   content=excluded.content,
                   importance=excluded.importance,
                   confidence=excluded.confidence,
+                  extraction_confidence=excluded.extraction_confidence,
                   status=excluded.status,
                   updated_at=excluded.updated_at,
                   metadata_json=excluded.metadata_json
@@ -136,6 +144,7 @@ class SQLiteStore:
                     node.content,
                     node.importance,
                     node.confidence,
+                    node.extraction_confidence,
                     node.status,
                     node.created_at,
                     node.updated_at,
@@ -160,6 +169,7 @@ class SQLiteStore:
     def upsert_edge(self, edge: Edge) -> Edge:
         edge = enforce_edge_rules(edge)
         edge = apply_edge_policy(edge)
+        self._validate_edge_endpoints(edge)
         with self.connect() as conn:
             conn.execute(
                 """
@@ -193,6 +203,15 @@ class SQLiteStore:
                 ),
             )
         return edge
+
+    def _validate_edge_endpoints(self, edge: Edge) -> None:
+        if edge.relation not in {"SUPPORTED_BY", "CONTRADICTED_BY", "EVIDENCE_FOR"}:
+            return
+        source = self.get_node(edge.source)
+        target = self.get_node(edge.target)
+        for role, node in {"source": source, "target": target}.items():
+            if node is not None and node.type in NON_EVIDENCE_TYPES:
+                raise ValueError(f"{node.type} cannot serve as Evidence in {edge.relation} edge {role}")
 
     def upsert_chunk(self, chunk: Chunk) -> Chunk:
         with self.connect() as conn:
@@ -335,6 +354,7 @@ class SQLiteStore:
             content=row["content"],
             importance=row["importance"],
             confidence=row["confidence"],
+            extraction_confidence=row["extraction_confidence"],
             status=row["status"],
             created_at=row["created_at"],
             updated_at=row["updated_at"],

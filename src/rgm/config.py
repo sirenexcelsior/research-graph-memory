@@ -20,6 +20,13 @@ def find_project_root(start: Path | None = None) -> Path:
     return current
 
 
+def env_flag(name: str, default: bool = False) -> bool:
+    value = os.getenv(name)
+    if value is None:
+        return default
+    return value.strip().lower() in {"1", "true", "yes", "on"}
+
+
 @dataclass(frozen=True)
 class RGMConfig:
     root: Path
@@ -61,4 +68,3 @@ class RGMConfig:
             return {}
         with path.open("r", encoding="utf-8") as handle:
             return yaml.safe_load(handle) or {}
-

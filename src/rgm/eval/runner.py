@@ -67,7 +67,7 @@ def run_eval_case(
     limit: int,
 ) -> EvalCaseResult:
     if mode in {"dense", "hybrid"}:
-        notes = [f"Mode {mode!r} is a reserved sidecar mode in V0.1.2; falling back to FTS5 recall."]
+        notes = [f"Mode {mode!r} is a reserved sidecar mode in V0.1.3; falling back to FTS5 recall."]
     else:
         notes = []
 

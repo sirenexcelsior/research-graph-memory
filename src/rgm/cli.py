@@ -19,7 +19,7 @@ from rgm.memory.remember import remember as remember_memory
 from rgm.storage.jsonl_store import export_store, import_jsonl_bundle
 from rgm.storage.sqlite_store import SQLiteStore
 
-app = typer.Typer(help="Research Graph Memory V0.1.2")
+app = typer.Typer(help="Research Graph Memory V0.1.3")
 
 
 def echo_json(payload: dict) -> None:

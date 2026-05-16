@@ -27,7 +27,7 @@
 - `graph-aware recall`：召回 Concept / Claim / Evidence / Decision / Hypothesis / Task 等结构化节点，而不是只返回相似 chunk。
 - `edge governance`：`MENTIONS` 不能作为推理证据；`RELATED_TO` 默认不是强证据；只有 `SUPPORTED_BY`、`CONTRADICTED_BY`、`TESTED_BY`、`PRODUCES`、`EVIDENCE_FOR` 等强边进入 reasoning path。
 - `research memory semantics`：能区分 Claim、Hypothesis、Evidence、Decision、Question、Experiment、Result，并能追踪研究状态。
-- `hybrid retrieval advantage`：比较 `fts5`、`dense`、`hybrid`、`hybrid_graph` 四种模式。V0.1.2 的 `dense` 与 `hybrid` 是预留 sidecar 模式，当前回退到 FTS5。
+- `hybrid retrieval advantage`：比较 `fts5`、`dense`、`hybrid`、`hybrid_graph` 四种模式。V0.1.3 的 `dense` 与 `hybrid` 是预留 sidecar 模式，当前回退到 FTS5。
 - `hallucination-resistance`：语义相近但项目不同、主题不同、没有 `reasoning_allowed` 路径的内容不能进入 evidence。
 
 ## JSONL Schema
@@ -115,7 +115,7 @@ RGM_DB_PATH=/private/tmp/rgm-eval-demo.sqlite rgm eval tests/eval/smoke_queries.
 RGM_DB_PATH=/private/tmp/rgm-eval-demo.sqlite rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
 ```
 
-V0.1.2 的当前必过门槛是 `smoke_queries.jsonl` 和 `regression_queries.jsonl`。`semantic_queries.jsonl` 与 `multilingual_queries.jsonl` 已经定义了 BGE-M3 sidecar 应该改善的目标，但在 dense index 真正实现前，它们更适合作为未来 A/B baseline，而不是硬性 CI gate。
+V0.1.3 的当前必过门槛是 `smoke_queries.jsonl` 和 `regression_queries.jsonl`。`semantic_queries.jsonl` 与 `multilingual_queries.jsonl` 已经定义了 BGE-M3 sidecar 应该改善的目标，但在 dense index 真正实现前，它们更适合作为未来 A/B baseline，而不是硬性 CI gate。
 
 ## 从真实素材构造 Golden Queries
 
@@ -139,8 +139,8 @@ V0.1.2 的当前必过门槛是 `smoke_queries.jsonl` 和 `regression_queries.js
 - negative：Forbidden Leakage Rate 低于 5%。
 - update：幂等导入 100%；已归档内容不得进入 active recall，除非 query 显式要求历史版本。
 
-## 当前 V0.1.2 状态
+## 当前 V0.1.3 状态
 
-- 已实现：FTS5、graph expansion、intent edge allowlist、context budget、weak edge policy、公开 JSONL eval runner。
+- 已实现：FTS5、graph expansion、intent edge allowlist、context budget、weak edge policy、project boundary guard、公开 JSONL eval runner。
 - 预留：BGE-M3 dense sidecar、dense-only/hybrid A/B 实测、LLM strong-edge proposal review。
 - 原则：弱边由规则/BGE 维护；强边由 LLM 提议；强边最终所有权属于 RGM。

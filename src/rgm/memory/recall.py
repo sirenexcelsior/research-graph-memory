@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from rgm.config import env_flag
 from rgm.models import RecallContext
 from rgm.retrieval.context_builder import build_context
 from rgm.retrieval.fts_search import fts_search
@@ -21,7 +22,7 @@ def recall(
     db.init_db()
     final_intent = intent or route_intent(query)
     search_result = fts_search(query, db, limit=limit, project=project)
-    cross_project_allowed = final_intent == "debug_explore" and debug
+    cross_project_allowed = final_intent == "debug_explore" and debug and env_flag("RGM_ENABLE_DEBUG_EXPLORE")
     expansion = graph_expand(
         search_result["seed_ids"],
         db,

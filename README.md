@@ -5,7 +5,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11%2B-blue)](#-install)
 [![Storage](https://img.shields.io/badge/Storage-SQLite%20%2B%20FTS5-lightgrey)](#-architecture)
 [![API](https://img.shields.io/badge/API-FastAPI-green)](#-fastapi)
-[![Status](https://img.shields.io/badge/Status-V0.1.2%20sandbox-orange)](#-status)
+[![Status](https://img.shields.io/badge/Status-V0.1.3%20consolidation-orange)](#-status)
 
 Translations: [中文](README.zh-CN.md) | [Русский](README.ru.md)
 
@@ -38,7 +38,7 @@ It is intentionally **not** a generic GraphRAG framework. SQLite is the durable 
 
 ## 🚦 Status
 
-Current stage: **V0.1.2 sandbox prototype**
+Current stage: **V0.1.3 consolidation prototype**
 
 Implemented:
 
@@ -58,6 +58,8 @@ Implemented:
 - BGE-M3 dense embedding interface stub.
 - Weak/strong edge policy with RGM-owned edge metadata.
 - Holographic Memory weak operational edge generation.
+- Project-scoped recall boundary tests and JSONL round-trip guardrails.
+- `extraction_confidence` schema placeholder for future extractor scoring.
 
 Validated on a private local corpus. The corpus itself is not included in this public repository.
 
@@ -81,7 +83,7 @@ Graph:
 - edges: 6271
 
 Tests:
-- pytest: 11 passed
+- pytest: 31 passed
 - graph validation: ok, 0 issues
 ```
 
@@ -240,7 +242,7 @@ Public eval files are synthetic and safe to commit. Private production eval case
 
 ## 🔮 BGE-M3 Plan
 
-V0.1.2 includes the interface but does not require dense embeddings.
+V0.1.3 keeps the interface but does not require dense embeddings.
 
 Planned V0.2 hybrid retrieval:
 
@@ -280,6 +282,7 @@ Done:
 - ✅ V0.1.1: extraction provider boundary, rule-based research extraction, Hermes provider stub, real GenMath/Hermes smoke test.
 - ✅ V0.1.2: weak edge policy, RGM edge ownership metadata, Holographic lightweight weak edges.
 - ✅ V0.1.2 eval extension: reusable JSONL eval framework for memory-system and graph-memory regression tests.
+- ✅ V0.1.3: consolidation tests, graph expansion/promote docs, dependency upper bounds, schema guard.
 
 Next:
 

@@ -33,6 +33,7 @@ class Node(BaseModel):
     content: str
     importance: float = 0.5
     confidence: float = 1.0
+    extraction_confidence: float | None = None
     status: str = "active"
     created_at: str = Field(default_factory=utc_now)
     updated_at: str | None = None
