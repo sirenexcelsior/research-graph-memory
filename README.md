@@ -31,6 +31,7 @@ It is intentionally **not** a generic GraphRAG framework. SQLite is the durable 
 - [Install](#-install)
 - [Core Commands](#-core-commands)
 - [FastAPI](#-fastapi)
+- [Evaluation](#-evaluation)
 - [BGE-M3 Plan](#-bge-m3-plan)
 - [Hermes Integration](#-hermes-integration)
 - [Roadmap](#-roadmap)
@@ -80,7 +81,7 @@ Graph:
 - edges: 6271
 
 Tests:
-- pytest: 6 passed
+- pytest: 11 passed
 - graph validation: ok, 0 issues
 ```
 
@@ -221,6 +222,19 @@ Endpoints:
 - `POST /trace`
 - `POST /evidence`
 
+## 🧪 Evaluation
+
+RGM includes a reusable golden-query evaluation framework, documented in [docs/testing-methodology.zh-CN.md](docs/testing-methodology.zh-CN.md).
+
+The tests are capability-oriented: every case defines what should be recalled or connected, and what must not leak into the final context.
+
+```bash
+rgm eval tests/eval/smoke_queries.jsonl --project demo --mode hybrid_graph
+rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
+```
+
+Public eval files are synthetic and safe to commit. Private production eval cases should live under `tests/eval/private/`, which is ignored by git.
+
 ## 🔮 BGE-M3 Plan
 
 V0.1.2 includes the interface but does not require dense embeddings.
@@ -262,11 +276,12 @@ Done:
 - ✅ V0.1: SQLite + FTS5 + CLI + FastAPI + JSONL + Holographic/Markdown import.
 - ✅ V0.1.1: extraction provider boundary, rule-based research extraction, Hermes provider stub, real GenMath/Hermes smoke test.
 - ✅ V0.1.2: weak edge policy, RGM edge ownership metadata, Holographic lightweight weak edges.
+- ✅ V0.1.2 eval extension: reusable JSONL eval framework for memory-system and graph-memory regression tests.
 
 Next:
 
 - 🔜 V0.2: optional BGE-M3 dense sidecar index and hybrid search.
-- 🔜 V0.2.x: better extraction evaluation metrics on real corpora.
+- 🔜 V0.2.x: private-corpus eval baselines and extraction quality metrics.
 - 🔜 V0.3: real Hermes LLM extraction loop.
 - 🔜 V0.4: incremental indexing and update detection.
 - 🔜 V0.5: experiment/result adapter and stronger evidence tracing.

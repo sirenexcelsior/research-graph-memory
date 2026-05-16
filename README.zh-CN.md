@@ -68,7 +68,7 @@ Graph:
 - edges: 6271
 
 测试:
-- pytest: 6 passed
+- pytest: 11 passed
 - graph validation: ok, 0 issues
 ```
 
@@ -138,6 +138,23 @@ rgm serve --host 127.0.0.1 --port 8000
 - `POST /trace`
 - `POST /evidence`
 
+## 🧪 评测框架
+
+RGM 现在包含一套可复用 golden-query 评测框架，方法论见 [docs/testing-methodology.zh-CN.md](docs/testing-methodology.zh-CN.md)。
+
+评测不是只看 query 是否返回结果，而是检查：
+
+- 应该召回/连接的节点、chunk、边、证据路径是否出现。
+- 不应该召回/连接/推理的负例是否被排除。
+- 上下文 token 成本、误召回率、跨项目泄漏是否可控。
+
+```bash
+rgm eval tests/eval/smoke_queries.jsonl --project demo --mode hybrid_graph
+rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
+```
+
+公开仓库只提交 synthetic eval。真实 Hermes/GenMath 生产评测文件应放在 `tests/eval/private/`，该目录已被 git 忽略。
+
 ## 🔮 BGE-M3 计划
 
 V0.1.2 只保留接口，不强依赖 dense embedding。
@@ -162,11 +179,12 @@ BGE-M3 是可选 sidecar index，不替代 SQLite 或 FTS5。
 - ✅ V0.1：SQLite、FTS5、CLI、FastAPI、JSONL、Holographic/Markdown 导入。
 - ✅ V0.1.1：抽取器边界、规则研究语义抽取、Hermes provider stub、真实 GenMath/Hermes 测试。
 - ✅ V0.1.2：弱边策略、RGM 边所有权 metadata、Holographic lightweight weak edges。
+- ✅ V0.1.2 eval extension：可复用 JSONL 评测框架，覆盖通用记忆系统与 RGM 图记忆回归测试。
 
 下一步：
 
 - 🔜 V0.2：加入可选 BGE-M3 dense sidecar index，实现 hybrid search。
-- 🔜 V0.2.x：加入真实语料上的抽取质量评估。
+- 🔜 V0.2.x：建立私有真实语料评测 baseline 与抽取质量指标。
 - 🔜 V0.3：接入真实 Hermes LLM extraction loop。
 - 🔜 V0.4：增量索引和变更检测。
 - 🔜 V0.5：实验/结果 adapter 与更强 evidence tracing。

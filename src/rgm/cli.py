@@ -9,6 +9,7 @@ import typer
 from rgm.adapters.holographic import import_holographic as import_holographic_file
 from rgm.adapters.markdown import ingest_markdown
 from rgm.config import RGMConfig
+from rgm.eval.runner import run_eval_file
 from rgm.graph.builder import build_and_save_graph
 from rgm.graph.validation import validate_graph as validate_graph_store
 from rgm.memory.forget import forget as forget_node
@@ -18,7 +19,7 @@ from rgm.memory.remember import remember as remember_memory
 from rgm.storage.jsonl_store import export_store, import_jsonl_bundle
 from rgm.storage.sqlite_store import SQLiteStore
 
-app = typer.Typer(help="Research Graph Memory V0.1")
+app = typer.Typer(help="Research Graph Memory V0.1.2")
 
 
 def echo_json(payload: dict) -> None:
@@ -71,6 +72,18 @@ def recall(
 ) -> None:
     context = recall_memory(query, intent=intent, project=project, debug=debug, limit=limit)
     echo_json(context.model_dump(mode="json"))
+
+
+@app.command("eval")
+def eval_queries(
+    path: Path,
+    project: Optional[str] = typer.Option(None, "--project"),
+    mode: str = typer.Option("hybrid_graph", "--mode", help="fts5, dense, hybrid, or hybrid_graph."),
+    limit: int = typer.Option(10, "--limit"),
+) -> None:
+    """Run golden-query memory evaluation cases from a JSONL file."""
+    result = run_eval_file(path, project=project, mode=mode, limit=limit)
+    echo_json(result.model_dump(mode="json"))
 
 
 @app.command("remember")
