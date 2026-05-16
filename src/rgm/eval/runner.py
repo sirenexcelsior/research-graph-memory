@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -254,9 +255,9 @@ def _match_node_expectation(expectation: NodeExpectation, nodes: list[dict[str, 
             continue
         if expectation.project and node.get("project") != expectation.project:
             continue
-        if expectation.title_contains and expectation.title_contains.lower() not in (node.get("title") or "").lower():
+        if expectation.title_contains and not _contains_text(node.get("title") or "", expectation.title_contains):
             continue
-        if expectation.content_contains and expectation.content_contains.lower() not in node.get("content", "").lower():
+        if expectation.content_contains and not _contains_text(node.get("content", ""), expectation.content_contains):
             continue
         return label, rank
     return label, None
@@ -267,9 +268,9 @@ def _match_chunk_expectation(expectation: ChunkExpectation, chunks: list[Chunk])
     for rank, chunk in enumerate(chunks, start=1):
         if expectation.id and chunk.id != expectation.id:
             continue
-        if expectation.text_contains and expectation.text_contains.lower() not in chunk.text.lower():
+        if expectation.text_contains and not _contains_text(chunk.text, expectation.text_contains):
             continue
-        if expectation.section_contains and expectation.section_contains.lower() not in (chunk.section or "").lower():
+        if expectation.section_contains and not _contains_text(chunk.section or "", expectation.section_contains):
             continue
         return label, rank
     return label, None
@@ -277,6 +278,14 @@ def _match_chunk_expectation(expectation: ChunkExpectation, chunks: list[Chunk])
 
 def _expectation_label(prefix: str, payload: dict[str, Any]) -> str:
     return f"{prefix}:{json.dumps(payload, ensure_ascii=False, sort_keys=True)}"
+
+
+def _normalize_text(value: str) -> str:
+    return re.sub(r"\s+", " ", value).strip().lower()
+
+
+def _contains_text(haystack: str, needle: str) -> bool:
+    return _normalize_text(needle) in _normalize_text(haystack)
 
 
 def _reasoning_path_hit(case: EvalCase, edges: list[Edge]) -> bool:
