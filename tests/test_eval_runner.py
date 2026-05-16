@@ -22,6 +22,16 @@ def test_eval_cases_load() -> None:
         assert all(case.expected_negative is not None for case in cases)
 
 
+def test_semantic_gap_cases_are_marked_as_future_dense_baseline() -> None:
+    cases = load_eval_cases(ROOT / "tests" / "eval" / "semantic_gap_queries.jsonl")
+
+    assert len(cases) >= 6
+    assert all(case.category == "semantic_gap" for case in cases)
+    assert all(case.metadata.get("semantic_gap") is True for case in cases)
+    assert all(case.metadata.get("fts5_expected_recall_at_k") == 0 for case in cases)
+    assert all(case.metadata.get("dense_expected_recall_at_k") == 1 for case in cases)
+
+
 def test_smoke_eval_runner_scores_demo_corpus(tmp_path: Path) -> None:
     store = SQLiteStore(tmp_path / "eval.sqlite")
     store.init_db()

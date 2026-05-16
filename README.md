@@ -236,9 +236,11 @@ The tests are capability-oriented: every case defines what should be recalled or
 ```bash
 rgm eval tests/eval/smoke_queries.jsonl --project demo --mode hybrid_graph
 rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
+rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
 ```
 
 Public eval files are synthetic and safe to commit. Private production eval cases should live under `tests/eval/private/`, which is ignored by git.
+`semantic_gap_queries.jsonl` is a future dense-sidecar baseline: FTS5-only is expected to miss many of these paraphrased queries until BGE-M3 is implemented.
 
 ## 🔮 BGE-M3 Plan
 

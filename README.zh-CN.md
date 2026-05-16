@@ -155,9 +155,11 @@ RGM 现在包含一套可复用 golden-query 评测框架，方法论见 [docs/t
 ```bash
 rgm eval tests/eval/smoke_queries.jsonl --project demo --mode hybrid_graph
 rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
+rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
 ```
 
 公开仓库只提交 synthetic eval。真实 Hermes/GenMath 生产评测文件应放在 `tests/eval/private/`，该目录已被 git 忽略。
+`semantic_gap_queries.jsonl` 是未来 dense sidecar 的专门 baseline：这些 query 刻意避开目标关键词，FTS5-only 预期会漏召回，等 BGE-M3 接入后应显著提升。
 
 ## 🔮 BGE-M3 计划
 

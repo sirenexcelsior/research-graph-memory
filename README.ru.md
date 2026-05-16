@@ -146,9 +146,11 @@ RGM включает переиспользуемый framework для golden-qu
 ```bash
 rgm eval tests/eval/smoke_queries.jsonl --project demo --mode hybrid_graph
 rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
+rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
 ```
 
 Публичные eval-файлы синтетические. Приватные production cases должны храниться в `tests/eval/private/`; этот путь игнорируется git.
+`semantic_gap_queries.jsonl` — baseline для будущего dense sidecar: FTS5-only ожидаемо пропускает многие paraphrased queries до подключения BGE-M3.
 
 ## 🔮 План BGE-M3
 

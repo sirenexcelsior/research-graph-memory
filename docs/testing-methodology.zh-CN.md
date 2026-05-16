@@ -76,6 +76,7 @@
 - `regression_queries.jsonl`：核心回归集，每次提交都应跑。
 - `lexical_queries.jsonl`：FTS5 精确术语、人名、公式、文件名。
 - `semantic_queries.jsonl`：BGE-M3 未来负责的同义、间接表述、概念等价。
+- `semantic_gap_queries.jsonl`：真正的 dense gap 集合，query 刻意避开目标关键词；V0.1.3 下 FTS5-only 预期低分，V0.2 接入 BGE-M3 后应显著提升。
 - `multilingual_queries.jsonl`：中文、英文、俄文 query 指向同一记忆。
 - `graph_reasoning_queries.jsonl`：Claim/Evidence/Decision/Hypothesis/Task 图语义。
 - `negative_queries.jsonl`：禁止误召回、禁止跨项目泄漏、禁止弱边变强证据。
@@ -115,7 +116,15 @@ RGM_DB_PATH=/private/tmp/rgm-eval-demo.sqlite rgm eval tests/eval/smoke_queries.
 RGM_DB_PATH=/private/tmp/rgm-eval-demo.sqlite rgm eval tests/eval/regression_queries.jsonl --project demo --mode hybrid_graph
 ```
 
-V0.1.3 的当前必过门槛是 `smoke_queries.jsonl` 和 `regression_queries.jsonl`。`semantic_queries.jsonl` 与 `multilingual_queries.jsonl` 已经定义了 BGE-M3 sidecar 应该改善的目标，但在 dense index 真正实现前，它们更适合作为未来 A/B baseline，而不是硬性 CI gate。
+V0.1.3 的当前必过门槛是 `smoke_queries.jsonl` 和 `regression_queries.jsonl`。`semantic_queries.jsonl`、`semantic_gap_queries.jsonl` 与 `multilingual_queries.jsonl` 已经定义了 BGE-M3 sidecar 应该改善的目标，但在 dense index 真正实现前，它们更适合作为未来 A/B baseline，而不是硬性 CI gate。
+
+运行 semantic gap baseline：
+
+```bash
+RGM_DB_PATH=/private/tmp/rgm-eval-demo.sqlite rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
+```
+
+该集合的设计目标不是让 V0.1.3 通过，而是记录“FTS5 找不到但 dense 应该找得到”的目标。每条 case 的 `metadata.semantic_gap=true`，并包含 `fts5_expected_recall_at_k` 与 `dense_expected_recall_at_k`，用于 V0.2 做 A/B 对比。
 
 ## 从真实素材构造 Golden Queries
 
