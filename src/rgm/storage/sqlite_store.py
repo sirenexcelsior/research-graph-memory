@@ -281,20 +281,25 @@ class SQLiteStore:
                 return []
         return [{"node": self._row_to_node(row), "score": row["score"]} for row in rows]
 
-    def search_chunks(self, query: str, limit: int = 8) -> list[dict[str, Any]]:
+    def search_chunks(self, query: str, limit: int = 8, project: str | None = None) -> list[dict[str, Any]]:
         fts = _fts_query(query)
+        params: list[Any] = [fts]
+        sql = """
+            SELECT chunks.*, bm25(chunks_fts) AS score
+            FROM chunks_fts
+            JOIN chunks ON chunks.id = chunks_fts.id
+        """
+        if project:
+            sql += " JOIN nodes ON nodes.id = chunks.id"
+        sql += " WHERE chunks_fts MATCH ?"
+        if project:
+            sql += " AND nodes.status = 'active' AND (nodes.project = ? OR nodes.project IS NULL)"
+            params.append(project)
+        sql += " ORDER BY score LIMIT ?"
+        params.append(limit)
         with self.connect() as conn:
             try:
-                rows = conn.execute(
-                    """
-                    SELECT chunks.*, bm25(chunks_fts) AS score
-                    FROM chunks_fts
-                    JOIN chunks ON chunks.id = chunks_fts.id
-                    WHERE chunks_fts MATCH ?
-                    ORDER BY score LIMIT ?
-                    """,
-                    (fts, limit),
-                ).fetchall()
+                rows = conn.execute(sql, params).fetchall()
             except sqlite3.OperationalError:
                 return []
         return [{"chunk": self._row_to_chunk(row), "score": row["score"]} for row in rows]

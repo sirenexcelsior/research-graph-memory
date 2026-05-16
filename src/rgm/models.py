@@ -75,6 +75,7 @@ class RecallRequest(BaseModel):
 class RecallContext(BaseModel):
     query: str
     intent: str
+    document_context: list[dict[str, Any]] = Field(default_factory=list)
     research_context: list[dict[str, Any]] = Field(default_factory=list)
     operational_context: list[dict[str, Any]] = Field(default_factory=list)
     preference_context: list[dict[str, Any]] = Field(default_factory=list)
@@ -82,4 +83,3 @@ class RecallContext(BaseModel):
     evidence: list[dict[str, Any]] = Field(default_factory=list)
     graph_paths: list[dict[str, Any]] = Field(default_factory=list)
     debug_info: dict[str, Any] = Field(default_factory=dict)
-

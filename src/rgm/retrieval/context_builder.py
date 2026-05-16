@@ -8,8 +8,10 @@ from rgm.storage.sqlite_store import SQLiteStore
 PREFERENCE_TYPES = {"Preference", "WorkflowHint", "ToolConfig"}
 SESSION_TYPES = {"SessionNote"}
 EVIDENCE_TYPES = {"Evidence", "Result"}
+DOCUMENT_TYPES = {"Document", "Chunk"}
 
 DEFAULT_CONTEXT_LIMITS = {
+    "document_context": 12,
     "research_context": 20,
     "operational_context": 10,
     "preference_context": 10,
@@ -21,12 +23,14 @@ DEFAULT_CONTEXT_LIMITS = {
 
 INTENT_CONTEXT_LIMITS = {
     "research_evidence": {
+        "document_context": 16,
         "research_context": 20,
         "evidence": 16,
         "graph_paths": 40,
         "reasoning_edges": 40,
     },
     "hypothesis_trace": {
+        "document_context": 12,
         "research_context": 24,
         "evidence": 12,
         "graph_paths": 40,
@@ -127,6 +131,7 @@ def build_context(
     edges = [db.get_edge(edge_id) for edge_id in expansion["edge_ids"]]
     edges = [edge for edge in edges if edge is not None]
     seen_by_bucket: dict[str, set[str]] = {
+        "document_context": set(),
         "research_context": set(),
         "operational_context": set(),
         "preference_context": set(),
@@ -136,7 +141,9 @@ def build_context(
 
     for node in nodes:
         payload = _node_payload(node)
-        if node.type in PREFERENCE_TYPES:
+        if node.type in DOCUMENT_TYPES:
+            _append_unique(context.document_context, payload, seen_by_bucket["document_context"], limits["document_context"])
+        elif node.type in PREFERENCE_TYPES:
             _append_unique(context.preference_context, payload, seen_by_bucket["preference_context"], limits["preference_context"])
         elif node.type in SESSION_TYPES:
             _append_unique(context.session_context, payload, seen_by_bucket["session_context"], limits["session_context"])
@@ -156,6 +163,7 @@ def build_context(
         "expanded_node_count": len(nodes),
         "expanded_edge_count": len(edges),
         "returned_counts": {
+            "document_context": len(context.document_context),
             "research_context": len(context.research_context),
             "operational_context": len(context.operational_context),
             "preference_context": len(context.preference_context),
@@ -165,6 +173,7 @@ def build_context(
         },
         "context_limits": limits,
         "max_hops": expansion["max_hops"],
+        "cross_project_allowed": expansion.get("cross_project_allowed", False),
         "reasoning_edges": reasoning_edges,
     }
     return context

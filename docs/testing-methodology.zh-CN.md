@@ -96,6 +96,8 @@
 - `cross_project_leakage_rate`：是否召回了其他 project 的内容。
 - `avg_context_tokens`：达到召回所需的大致上下文成本。
 
+RGM 的 recall JSON 包含 `document_context`，用于承载 `Document` / `Chunk` 这类文档层记忆。project-scoped recall 默认不允许跨项目 chunk seed 或 graph expansion；如果测试中出现跨项目内容，应视为泄漏，除非 case 明确要求 `debug_explore`。
+
 ## 运行方式
 
 准备公开 demo corpus：

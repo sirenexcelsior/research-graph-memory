@@ -17,6 +17,7 @@ from rgm.models import Chunk, Edge
 from rgm.storage.sqlite_store import SQLiteStore
 
 CONTEXT_BUCKETS = (
+    "document_context",
     "evidence",
     "research_context",
     "operational_context",

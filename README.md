@@ -197,6 +197,7 @@ rgm import-jsonl data/processed
 
 Recall returns structured JSON:
 
+- `document_context`
 - `research_context`
 - `operational_context`
 - `preference_context`
@@ -204,6 +205,8 @@ Recall returns structured JSON:
 - `evidence`
 - `graph_paths`
 - `debug_info`
+
+By default, project-scoped recall keeps FTS chunk seeds and graph expansion inside the requested project. Cross-project expansion is reserved for explicit debug exploration.
 
 ## 🌐 FastAPI
 

@@ -12,6 +12,14 @@ def graph_expand(
     *,
     intent: str,
     debug: bool = False,
+    project: str | None = None,
+    cross_project_allowed: bool = False,
 ) -> dict[str, Any]:
-    return expand_from_seeds(seed_ids, store=store, intent=intent, debug=debug)
-
+    return expand_from_seeds(
+        seed_ids,
+        store=store,
+        intent=intent,
+        debug=debug,
+        project=project,
+        cross_project_allowed=cross_project_allowed,
+    )

@@ -138,6 +138,8 @@ rgm serve --host 127.0.0.1 --port 8000
 - `POST /trace`
 - `POST /evidence`
 
+`recall` 返回结构化 JSON，包括 `document_context`、`research_context`、`operational_context`、`preference_context`、`session_context`、`evidence`、`graph_paths` 与 `debug_info`。默认情况下，project-scoped recall 会把 chunk FTS seed 和 graph expansion 限制在当前 project 内；跨项目扩展只留给显式 debug exploration。
+
 ## 🧪 评测框架
 
 RGM 现在包含一套可复用 golden-query 评测框架，方法论见 [docs/testing-methodology.zh-CN.md](docs/testing-methodology.zh-CN.md)。

@@ -133,6 +133,8 @@ rgm serve --host 127.0.0.1 --port 8000
 - `POST /trace`
 - `POST /evidence`
 
+`recall` возвращает структурированный JSON: `document_context`, `research_context`, `operational_context`, `preference_context`, `session_context`, `evidence`, `graph_paths` и `debug_info`. По умолчанию project-scoped recall ограничивает chunk FTS seeds и graph expansion текущим project; cross-project expansion оставлен для явного debug exploration.
+
 ## 🧪 Оценка качества
 
 RGM включает переиспользуемый framework для golden-query evaluation. Методология описана в [docs/testing-methodology.zh-CN.md](docs/testing-methodology.zh-CN.md).

@@ -86,6 +86,12 @@ def node_allowed(node_layer: str, intent: str) -> bool:
     return node_layer in layers
 
 
+def project_allowed(node_project: str | None, project: str | None, cross_project_allowed: bool) -> bool:
+    if cross_project_allowed or project is None:
+        return True
+    return node_project in {None, project}
+
+
 def expand_from_seeds(
     seed_ids: list[str],
     store: SQLiteStore | None = None,
@@ -93,14 +99,23 @@ def expand_from_seeds(
     intent: str = "general_recall",
     debug: bool = False,
     max_hops: int | None = None,
+    project: str | None = None,
+    cross_project_allowed: bool = False,
 ) -> dict[str, Any]:
     db = store or SQLiteStore()
     hops = max_hops if max_hops is not None else max_hops_for_intent(intent, debug=debug)
-    visited: set[str] = set(seed_ids)
-    node_ids: set[str] = set(seed_ids)
+    allowed_seed_ids = []
+    for seed_id in seed_ids:
+        node = db.get_node(seed_id)
+        if node is not None and project_allowed(node.project, project, cross_project_allowed):
+            allowed_seed_ids.append(seed_id)
+    visited: set[str] = set(allowed_seed_ids)
+    node_ids: set[str] = set(allowed_seed_ids)
+    node_order: list[str] = list(dict.fromkeys(allowed_seed_ids))
     edge_ids: set[str] = set()
+    edge_order: list[str] = []
     paths: list[dict[str, Any]] = []
-    queue = deque((seed_id, 0, [seed_id], []) for seed_id in seed_ids)
+    queue = deque((seed_id, 0, [seed_id], []) for seed_id in allowed_seed_ids)
 
     while queue:
         current_id, depth, path_nodes, path_edges = queue.popleft()
@@ -116,20 +131,27 @@ def expand_from_seeds(
             neighbor = db.get_node(neighbor_id)
             if neighbor is None or neighbor.status != "active":
                 continue
+            if not project_allowed(neighbor.project, project, cross_project_allowed):
+                continue
             if not node_allowed(neighbor.layer, intent):
                 continue
             next_path_nodes = [*path_nodes, neighbor_id]
             next_path_edges = [*path_edges, edge.id]
-            edge_ids.add(edge.id)
-            node_ids.add(neighbor_id)
+            if edge.id not in edge_ids:
+                edge_ids.add(edge.id)
+                edge_order.append(edge.id)
+            if neighbor_id not in node_ids:
+                node_ids.add(neighbor_id)
+                node_order.append(neighbor_id)
             paths.append({"nodes": next_path_nodes, "edges": next_path_edges})
             if neighbor_id not in visited:
                 visited.add(neighbor_id)
                 queue.append((neighbor_id, depth + 1, next_path_nodes, next_path_edges))
 
     return {
-        "node_ids": sorted(node_ids),
-        "edge_ids": sorted(edge_ids),
+        "node_ids": node_order,
+        "edge_ids": edge_order,
         "paths": paths,
         "max_hops": hops,
+        "cross_project_allowed": cross_project_allowed,
     }

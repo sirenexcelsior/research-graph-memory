@@ -1,4 +1,5 @@
 from rgm.graph.schema import make_edge
+from rgm.adapters.markdown import ingest_markdown
 from rgm.memory.promote import promote
 from rgm.memory.recall import recall
 from rgm.memory.remember import remember
@@ -57,3 +58,20 @@ def test_recall_context_dedupes_evidence_and_paths(tmp_path):
     assert evidence.id not in research_ids
     assert len(path_keys) == len(set(path_keys))
     assert len(context.graph_paths) <= context.debug_info["context_limits"]["graph_paths"]
+
+
+def test_recall_document_context_respects_project_boundary(tmp_path):
+    db = SQLiteStore(tmp_path / "rgm.sqlite")
+    project_a = tmp_path / "project_a.md"
+    project_b = tmp_path / "project_b.md"
+    project_a.write_text("# Alpha Doc\n\nBoundaryToken belongs to project alpha.\n", encoding="utf-8")
+    project_b.write_text("# Beta Doc\n\nBoundaryToken belongs to project beta.\n", encoding="utf-8")
+    ingest_markdown(project_a, db, project="alpha")
+    ingest_markdown(project_b, db, project="beta")
+
+    context = recall("BoundaryToken", project="alpha", intent="research_evidence", store=db)
+
+    assert context.document_context
+    assert any(item["project"] == "alpha" for item in context.document_context)
+    assert all(item["project"] in {None, "alpha"} for item in context.document_context)
+    assert context.debug_info["cross_project_allowed"] is False

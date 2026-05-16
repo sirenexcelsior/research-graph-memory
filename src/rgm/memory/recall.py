@@ -21,6 +21,13 @@ def recall(
     db.init_db()
     final_intent = intent or route_intent(query)
     search_result = fts_search(query, db, limit=limit, project=project)
-    expansion = graph_expand(search_result["seed_ids"], db, intent=final_intent, debug=debug)
+    cross_project_allowed = final_intent == "debug_explore" and debug
+    expansion = graph_expand(
+        search_result["seed_ids"],
+        db,
+        intent=final_intent,
+        debug=debug,
+        project=project,
+        cross_project_allowed=cross_project_allowed,
+    )
     return build_context(query, final_intent, search_result, expansion, db)
-
