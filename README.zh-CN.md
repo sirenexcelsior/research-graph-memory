@@ -161,40 +161,13 @@ rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
 公开仓库只提交 synthetic eval。真实 Hermes/GenMath 生产评测文件应放在 `tests/eval/private/`，该目录已被 git 忽略。
 `semantic_gap_queries.jsonl` 是未来 dense sidecar 的专门 baseline：这些 query 刻意避开目标关键词，FTS5-only 预期会漏召回，等 BGE-M3 接入后应显著提升。
 
-## 🔮 BGE-M3 计划
-
-V0.1.3 只保留接口，不强依赖 dense embedding。
-
-V0.2 计划：
-
-```text
-query
-  -> FTS5 keyword seeds
-  -> optional BGE-M3 dense semantic seeds
-  -> score fusion
-  -> layer-aware graph expansion
-  -> structured context
-```
-
-BGE-M3 是可选 sidecar index，不替代 SQLite 或 FTS5。
-
-## 🗺 项目计划
-
-已完成：
+## 🗺 历史版本
 
 - ✅ V0.1：SQLite、FTS5、CLI、FastAPI、JSONL、Holographic/Markdown 导入。
 - ✅ V0.1.1：抽取器边界、规则研究语义抽取、Hermes provider stub、真实 GenMath/Hermes 测试。
 - ✅ V0.1.2：弱边策略、RGM 边所有权 metadata、Holographic lightweight weak edges。
 - ✅ V0.1.2 eval extension：可复用 JSONL 评测框架，覆盖通用记忆系统与 RGM 图记忆回归测试。
 - ✅ V0.1.3：补齐巩固测试、graph expansion/promote 文档、依赖上界、schema guard。
-
-下一步：
-
-- 🔜 V0.2：加入可选 BGE-M3 dense sidecar index，实现 hybrid search。
-- 🔜 V0.2.x：建立私有真实语料评测 baseline 与抽取质量指标。
-- 🔜 V0.3：接入真实 Hermes LLM extraction loop。
-- 🔜 V0.4：增量索引和变更检测。
-- 🔜 V0.5：实验/结果 adapter 与更强 evidence tracing。
 
 ## ✅ 测试
 

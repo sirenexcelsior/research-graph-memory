@@ -32,9 +32,8 @@ It is intentionally **not** a generic GraphRAG framework. SQLite is the durable 
 - [Core Commands](#-core-commands)
 - [FastAPI](#-fastapi)
 - [Evaluation](#-evaluation)
-- [BGE-M3 Plan](#-bge-m3-plan)
 - [Hermes Integration](#-hermes-integration)
-- [Roadmap](#-roadmap)
+- [Version History](#-version-history)
 
 ## 🚦 Status
 
@@ -242,23 +241,6 @@ rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
 Public eval files are synthetic and safe to commit. Private production eval cases should live under `tests/eval/private/`, which is ignored by git.
 `semantic_gap_queries.jsonl` is a future dense-sidecar baseline: FTS5-only is expected to miss many of these paraphrased queries until BGE-M3 is implemented.
 
-## 🔮 BGE-M3 Plan
-
-V0.1.3 keeps the interface but does not require dense embeddings.
-
-Planned V0.2 hybrid retrieval:
-
-```text
-query
-  -> FTS5 keyword seeds
-  -> optional BGE-M3 dense semantic seeds
-  -> score fusion
-  -> layer-aware graph expansion
-  -> structured context
-```
-
-BGE-M3 should be implemented as an optional sidecar dense index, not as a replacement for SQLite or FTS5.
-
 ## 🤝 Hermes Integration
 
 RGM is designed to integrate with Hermes over HTTP:
@@ -276,23 +258,13 @@ Hermes does semantic understanding.
 RGM does memory governance.
 ```
 
-## 🗺 Roadmap
-
-Done:
+## 🗺 Version History
 
 - ✅ V0.1: SQLite + FTS5 + CLI + FastAPI + JSONL + Holographic/Markdown import.
 - ✅ V0.1.1: extraction provider boundary, rule-based research extraction, Hermes provider stub, real GenMath/Hermes smoke test.
 - ✅ V0.1.2: weak edge policy, RGM edge ownership metadata, Holographic lightweight weak edges.
 - ✅ V0.1.2 eval extension: reusable JSONL eval framework for memory-system and graph-memory regression tests.
 - ✅ V0.1.3: consolidation tests, graph expansion/promote docs, dependency upper bounds, schema guard.
-
-Next:
-
-- 🔜 V0.2: optional BGE-M3 dense sidecar index and hybrid search.
-- 🔜 V0.2.x: private-corpus eval baselines and extraction quality metrics.
-- 🔜 V0.3: real Hermes LLM extraction loop.
-- 🔜 V0.4: incremental indexing and update detection.
-- 🔜 V0.5: experiment/result adapter and stronger evidence tracing.
 
 ## ✅ Test
 

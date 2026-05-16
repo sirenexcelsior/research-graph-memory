@@ -152,40 +152,13 @@ rgm eval tests/eval/semantic_gap_queries.jsonl --project demo --mode fts5
 Публичные eval-файлы синтетические. Приватные production cases должны храниться в `tests/eval/private/`; этот путь игнорируется git.
 `semantic_gap_queries.jsonl` — baseline для будущего dense sidecar: FTS5-only ожидаемо пропускает многие paraphrased queries до подключения BGE-M3.
 
-## 🔮 План BGE-M3
-
-V0.1.3 содержит интерфейс, но не требует dense embeddings.
-
-План V0.2:
-
-```text
-query
-  -> FTS5 keyword seeds
-  -> optional BGE-M3 dense semantic seeds
-  -> score fusion
-  -> layer-aware graph expansion
-  -> structured context
-```
-
-BGE-M3 должен быть опциональным sidecar index, а не заменой SQLite или FTS5.
-
-## 🗺 План развития
-
-Сделано:
+## 🗺 История версий
 
 - ✅ V0.1: SQLite, FTS5, CLI, FastAPI, JSONL, импорт Holographic/Markdown.
 - ✅ V0.1.1: extractor provider boundary, правиловое исследовательское извлечение, Hermes provider stub, тест на реальных GenMath/Hermes данных.
 - ✅ V0.1.2: политика слабых ребер, RGM edge ownership metadata, Holographic lightweight weak edges.
 - ✅ V0.1.2 eval extension: переиспользуемый JSONL eval framework для регрессии памяти и графовых возможностей.
 - ✅ V0.1.3: consolidation tests, graph expansion/promote docs, dependency upper bounds, schema guard.
-
-Далее:
-
-- 🔜 V0.2: опциональный BGE-M3 dense sidecar index и hybrid search.
-- 🔜 V0.2.x: private-corpus eval baseline и метрики качества извлечения.
-- 🔜 V0.3: реальный цикл Hermes LLM extraction.
-- 🔜 V0.4: инкрементальная индексация и обнаружение изменений.
-- 🔜 V0.5: adapter для экспериментов/результатов и более сильный evidence tracing.
 
 ## ✅ Тесты
 
